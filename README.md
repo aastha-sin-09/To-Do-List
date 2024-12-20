@@ -24,7 +24,7 @@ Plan-It! is a visually appealing and user-friendly task management web applicati
 - **LocalStorage**: To persist tasks and user session data across page reloads.
 
 ## Installation
-1. Clone this repository:  https://aastha-sin-09.github.io/To-Do-List/
+1. Clone this repository:  git clone https://github.com/aastha-sin-09/To-Do-List.git
 2. Open index.html in your browser to start using Plan-It!
 
 ## Usage
