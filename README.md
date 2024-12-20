@@ -25,6 +25,7 @@ Plan-It! is a visually appealing and user-friendly task management web applicati
 
 ## Installation
 1. Clone this repository:  https://aastha-sin-09.github.io/To-Do-List/
+2. Open index.html in your browser to start using Plan-It!
 
 ## Usage
 1. **Login/Signup**:
