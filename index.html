@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan-It!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: url(fool.jpg)no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <!-- Calendar aligned to the left -->
+            <div class="d-flex align-items-center calender">
+                <input type="date" class="form-control form-control-sm" style="max-width: 150px;">
+            </div>
+
+            <!-- Brand logo centered -->
+            <a class="navbar-brand mx-auto logo" href="#"><img src="task.png" height="40px">PLAN-iT!</a>
+
+            <!-- Buttons aligned to the right -->
+            <div>
+                <a href="login.html" class="navbar-link">Login</a>
+                <a href="signup.html" class="navbar-link">Signup</a>
+                <a id="logoutBtn" style="display: none;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Bar -->
+    <div class="side-bar">
+        <div class="menu">
+            <div class="item" id="TaskBtn">
+                <a href="#"><i class="fas fa-hourglass-start"></i>Today's Task</a>
+            </div>
+            <div class="item" id="ProjectBtn">
+                <a href="#"><i class="fas fa-project-diagram"></i>Projects</a>
+            </div>
+            <div class="item" id="ThingsLaterBtn">
+                <a href="#"><i class="fas fa-clock"></i>Things Later</a>
+            </div>
+            <div class="item" id="ImpTaskBtn">
+                <a href="#"><i class="fas fa-exclamation-circle"></i>Important Task</a>
+            </div>
+        </div>
+    </div>
+
+    <!--Card-->
+    <div class="To-Do-card">
+        <div class="container p-4">
+            <h4 class="text-center text-white mb-3" style="font-size: 36px;"><b>Today's Task</b></h4>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer">
+                <div class="progress">
+                    <div id="progressBar" class="progress-bar bg-success" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Input and Button for Adding Tasks -->
+            <div class="input-group mb-3">
+                <input type="text" id="taskInput" class="form-control" placeholder="Add a new task">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="addTaskBtn">Add</button>
+                </div>
+            </div>
+
+            <!-- Task List -->
+            <ul id="taskList" class="list-group"></ul>
+        </div>
+    </div>
+
+    <script>
+        const pageKey = "tasks-today";
+
+        $(document).ready(function () {
+            $('#TaskBtn').addClass('active');
+
+            function updateProgressBar() {
+                // Update progress for Today's Task
+                const totalTasks = $('#taskList input[type="checkbox"]').length;
+                const completedTasks = $('#taskList input[type="checkbox"]:checked').length;
+                const progressPercentTasks = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+                $('#progressBar').css('width', progressPercentTasks + '%').text(Math.round(progressPercentTasks) + '%');
+            }
+            function saveTasks() {
+                const tasks = [];
+                $('#taskList li').each(function () {
+                    const taskText = $(this).find('span').text();
+                    const isCompleted = $(this).find('input[type="checkbox"]').is(':checked');
+                    tasks.push({ text: taskText, completed: isCompleted });
+                });
+                localStorage.setItem(pageKey, JSON.stringify(tasks));
+            }
+            function loadTasks() {
+                const savedTasks = JSON.parse(localStorage.getItem(pageKey));
+                if (savedTasks) {
+                    $('#taskList').empty();
+                    savedTasks.forEach(task => {
+                        const isChecked = task.completed ? 'checked' : '';
+                        $('#taskList').append(`
+                        <li class="list-group-item d-flex align-items-center">
+                            <input type="checkbox" class="mr-2" ${isChecked}>
+                            <span class="flex-grow-1">${task.text}</span>
+                            <button class="delete-task">&times;</button>
+                        </li>
+                    `);
+                    });
+                    updateProgressBar();
+                }
+            }
+
+            $('#ProjectBtn').click(function () {
+                window.location.href = "ProjectPage.html"
+            });
+            $('#ImpTaskBtn').click(function () {
+                window.location.href = "importanttask.html"
+            });
+            $('#ThingsLaterBtn').click(function () {
+                window.location.href = "thingslater.html"
+            });
+            $('#TaskBtn').click(function () {
+                window.location.href = "index.html"
+            });
+
+            const loginStatusKey = "isLoggedIn";
+
+            // Check login status
+            function checkLoginStatus() {
+                const isLoggedIn = localStorage.getItem(loginStatusKey) === "true";
+                if (isLoggedIn) {
+                    $("a[href='login.html'], a[href='signup.html']").hide();
+                    $("#logoutBtn").show();
+                } else {
+                    $("a[href='login.html'], a[href='signup.html']").show();
+                    $("#logoutBtn").hide();
+                }
+            }
+
+            // Logout button action
+            $("#logoutBtn").click(function () {
+                localStorage.setItem(loginStatusKey, "false");
+                checkLoginStatus();
+            });
+
+            // Call checkLoginStatus on page load
+            checkLoginStatus();
+
+            // Add a new task
+            $('#addTaskBtn').click(function () {
+                let task = $('#taskInput').val().trim();
+                if (task !== '') {
+                    $('#taskList').append(`
+                <li class="list-group-item d-flex align-items-center">
+                    <input type="checkbox" class="mr-2">
+                    <span class="flex-grow-1">${task}</span>
+                    <button class="delete-task">&times;</button>
+                </li>
+            `);
+                    $('#taskInput').val(''); // Clear input
+                    saveTasks();
+                    updateProgressBar();
+                }
+            });
+
+            // Remove a task
+            $('#taskList').on('click', '.delete-task', function () {
+                $(this).closest('li').remove();
+                saveTasks();
+                updateProgressBar();
+            });
+
+            // Update progress bar when checkbox is toggled
+            $('#taskList').on('change', 'input[type="checkbox"]', function () {
+                saveTasks();
+                updateProgressBar();
+            });
+
+            // Allow Enter key to add task
+            $('#taskInput').keypress(function (e) {
+                if (e.which === 13) {
+                    $('#addTaskBtn').click();
+                }
+            });
+            loadTasks();
+            updateProgressBar();
+
+        });
+    </script>
+
+</body>
+
+</html>
